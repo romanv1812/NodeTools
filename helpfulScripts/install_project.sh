@@ -1,14 +1,14 @@
 #!/bin/bash
 
-# Функция для определения последнего релиза по URL репозитория
+# Функция для определения последнего релиза по URL репозитория без использования jq
 function get_latest_release {
     repo_url="$1"
     
     # Используем GitHub API для получения информации о релизах
     releases_json=$(curl -s "https://api.github.com/repos${repo_url}/releases")
     
-    # Извлекаем версию последнего релиза
-    latest_release_version=$(echo "$releases_json" | jq -r '.[0].tag_name')
+    # Извлекаем версию последнего релиза без jq
+    latest_release_version=$(echo "$releases_json" | grep -o '"tag_name": "[^"]*' | grep -o '[^"]*$' | head -n 1)
     
     echo "$latest_release_version"
 }
