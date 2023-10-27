@@ -14,6 +14,9 @@ create_user() {
     chmod 700 /home/$username
     chmod 600 /home/$username/.ssh/authorized_keys
 
+    # Добавление пути к Go в ~/.bash_profile пользователя
+    echo "export PATH=$PATH:/usr/local/go/bin" >> /home/$username/.bash_profile
+
     echo -e "\033[1m\033[32mПользователь $username создан и добавлен в группу sudo.\033[0m"
     return 0
 }
