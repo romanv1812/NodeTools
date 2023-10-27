@@ -4,10 +4,23 @@
 function get_latest_releases {
     repo_url="$1"
     
-    # Используем предоставленный код для определения версий
-    TAGS=$(wget -qO- "https://api.github.com/repos${repo_url}/releases" | jq '.[] | select(.prerelease==false) | select(.draft==false) | .html_url' | grep -Eo "v[0-9]*\.[0-9]*\.[0-9]*")
+    # Клонируем репозиторий во временную директорию
+    temp_dir=$(mktemp -d)
+    git clone "$repo_url" "$temp_dir"
     
-    echo "$TAGS"
+    # Переходим в директорию репозитория
+    cd "$temp_dir"
+    
+    # Получаем список тегов
+    git fetch --tags
+    
+    # Извлекаем версии релизов из тегов
+    latest_releases=$(git tag -l | grep -Eo "v[0-9]*\.[0-9]*\.[0-9]*" | sort -V | tail -n 5)
+    
+    # Удаляем временную директорию
+    rm -rf "$temp_dir"
+    
+    echo "$latest_releases"
 }
 
 # Получение URL репозитория от пользователя
@@ -20,5 +33,5 @@ if [ -n "$latest_releases" ]; then
     echo "Последние версии релизов:"
     echo "$latest_releases"
 else
-    echo "Не удалось определить версии релизов. Проверьте URL репозитория и доступность релизов."
+    echo "Не удалось определить версии релизов. Проверьте URL репозитория и доступность тегов."
 fi
