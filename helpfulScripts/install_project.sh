@@ -35,7 +35,6 @@ while true; do
     fi
 done
 
-# Вывод выбранной версии и запрос пользователя о действии
 echo "Выбранная версия: $selected_version"
 read -p "Установить эту версию? (y/n): " install_version
 
