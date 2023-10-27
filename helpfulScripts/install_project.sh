@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 function ask_for_repo {
     read -p "Введите URL репозитория проекта: " repo_url
 }
