@@ -3,8 +3,15 @@
 # Функция для определения последнего релиза по URL репозитория
 function get_latest_release {
     repo_url="$1"
-    latest_release=$(curl -s "https://api.github.com/repos${repo_url}/releases/latest" | grep -o '"tag_name": "[^"]*' | grep -o '[^"]*$')
-    echo "$latest_release"
+    repo_api_url="https://api.github.com/repos${repo_url}"
+    
+    # Используем GitHub API для получения информации о репозитории
+    latest_release_url=$(curl -s "${repo_api_url}/releases/latest" | grep -o '"html_url": "[^"]*' | grep -o '[^"]*$')
+    
+    # Извлекаем версию из URL последнего релиза
+    latest_release_version=$(basename "$latest_release_url")
+    
+    echo "$latest_release_version"
 }
 
 # Функция для предложения выбора действия (собрать из исходного кода или скачать бинарник)
