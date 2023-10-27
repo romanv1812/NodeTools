@@ -1,54 +1,47 @@
 #!/bin/bash
 
-# URL репозитория
-repo_url="https://github.com/umee-network/umee.git"
+# Функция для запроса пользователя о репозитории проекта
+function ask_for_repo {
+    read -p "Введите URL репозитория проекта: " repo_url
+}
 
-# Каталог, в который будет клонирован репозиторий
-repo_dir="umee_repo"
-
-# Получение последнего релиза из GitHub
-latest_release=$(curl -s "$repo_url/releases/latest" | grep -o '"tag_name": "[^"]*' | grep -o '[^"]*$')
-
-# Вывод последней версии и запрос пользователя
-read -p "Последний релиз: $latest_release. Установить его? (y/n): " install_latest
-
-if [[ "$install_latest" == "y" || "$install_latest" == "Y" ]]; then
-    # Создание временного каталога для клонирования репозитория
-    mkdir -p "$repo_dir"
+# Функция для выбора версии релиза
+function select_release {
+    # Получение списка доступных версий
+    releases=$(curl -s "${repo_url}/releases" | grep -o '"tag_name": "[^"]*' | grep -o '[^"]*$')
     
-    # Клонирование репозитория
-    git clone --branch "$latest_release" "$repo_url" "$repo_dir"
-    
-    # Переход в каталог с клонированным репозиторием
-    cd "$repo_dir" || exit
-    
-    # Предложение выбора: скачать готовый файл или собрать из исходного кода
-    echo "Выберите действие:"
-    select action in "Скачать готовый файл" "Собрать из исходного кода"; do
-        case $action in
-            "Скачать готовый файл")
-                # Вставьте здесь код для скачивания готового файла (если доступно)
-                echo "Скачивание готового файла..."
-                # Замените следующую строку на команду для скачивания файла
-                echo "Команда для скачивания готового файла"
-                break
-                ;;
-            "Собрать из исходного кода")
-                # Сборка проекта с помощью Go
-                go build
-                echo "Проект успешно собран."
-                break
-                ;;
-            *)
-                echo "Выберите вариант 1 или 2."
-                ;;
-        esac
+    # Вывод списка версий
+    echo "Доступные версии релиза:"
+    select version in $releases "Выбрать другую версию"; do
+        if [ "$version" == "Выбрать другую версию" ]; then
+            return 1
+        elif [ -n "$version" ]; then
+            selected_version="$version"
+            return 0
+        else
+            echo "Пожалуйста, выберите версию из списка."
+        fi
     done
-else
-    echo "Вы выбрали не устанавливать последний релиз."
-fi
+}
 
-# Удаление временных файлов
-if [ -d "$repo_dir" ]; then
-    rm -rf "$repo_dir"
+# Запрос репозитория проекта
+ask_for_repo
+
+# Запрос пользователя о версии релиза
+while true; do
+    select_release
+    if [ $? -eq 0 ]; then
+        break
+    fi
+done
+
+# Вывод выбранной версии и запрос пользователя о действии
+echo "Выбранная версия: $selected_version"
+read -p "Установить эту версию? (y/n): " install_version
+
+if [[ "$install_version" == "y" || "$install_version" == "Y" ]]; then
+    # Здесь можно добавить код для установки выбранной версии проекта
+    echo "Установка проекта с версией $selected_version..."
+else
+    echo "Вы отказались от установки."
 fi
