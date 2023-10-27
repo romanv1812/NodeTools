@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function ask_for_repo {
-    read -p "Введите URL репозитория проекта: " repo_url
+    read -p "Введит URL репозитория проекта: " repo_url
 }
 
 # Функция для выбора версии релиза
