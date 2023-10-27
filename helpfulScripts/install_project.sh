@@ -1,14 +1,24 @@
 #!/bin/bash
 
-# Функция для определения последнего релиза по URL репозитория
+# Функция для определения версии последнего релиза из локального репозитория
 function get_latest_release {
     repo_url="$1"
     
-    # Используем GitHub API для получения информации о релизах
-    releases_json=$(curl -s "https://api.github.com/repos${repo_url}/releases")
+    # Клонируем репозиторий во временную директорию
+    temp_dir=$(mktemp -d)
+    git clone "$repo_url" "$temp_dir"
     
-    # Извлекаем версию последнего релиза без jq
-    latest_release_version=$(echo "$releases_json" | grep -o '"tag_name": "[^"]*' | grep -o '[^"]*$' | head -n 1)
+    # Переходим в директорию репозитория
+    cd "$temp_dir"
+    
+    # Получаем список тегов
+    git fetch --tags
+    
+    # Извлекаем версию последнего релиза из тегов
+    latest_release_version=$(git tag -l | grep -Eo "v[0-9]*\.[0-9]*\.[0-9]*" | sort -V | tail -n 1)
+    
+    # Удаляем временную директорию
+    rm -rf "$temp_dir"
     
     echo "$latest_release_version"
 }
@@ -16,11 +26,11 @@ function get_latest_release {
 # Получение URL репозитория от пользователя
 read -p "Введите URL репозитория проекта (например, https://github.com/umee-network/umee.git): " repo_url
 
-# Определение последнего релиза
+# Определение версии последнего релиза
 latest_release=$(get_latest_release "$repo_url")
 
 if [ -n "$latest_release" ]; then
     echo "Последний релиз: $latest_release"
 else
-    echo "Не удалось определить версию последнего релиза. Проверьте URL репозитория и доступность релизов."
+    echo "Не удалось определить версию последнего релиза. Проверьте URL репозитория и доступность тегов."
 fi
