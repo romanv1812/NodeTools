@@ -16,6 +16,7 @@ create_user() {
 
     # Добавление пути к Go в ~/.bash_profile пользователя
     echo "export PATH=$PATH:/usr/local/go/bin" >> /home/$username/.bash_profile
+    chown $username:$username /home/$username/.bash_profile 
 
     echo -e "\033[1m\033[32mПользователь $username создан и добавлен в группу sudo.\033[0m"
     return 0
