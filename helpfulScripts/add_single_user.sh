@@ -31,8 +31,6 @@ while $should_continue; do
     echo -ne "\033[1m\033[34mУстановите пароль для пользователя $project: \033[0m"
     read password
 
-    esac
-
     username="$project"
 
     if id "$username" &>/dev/null; then
