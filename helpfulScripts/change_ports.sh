@@ -26,18 +26,3 @@ sed -i.bak \
 
 echo "export NODE=http://localhost:$((NODE_NUMBER + 266))57" >> $HOME/.bash_profile
 source $HOME/.bash_profile
-
-# Read the updated ports from config files and display them
-PROXY_APP_PORT=$(grep -oP 'proxy_app = "tcp://[^:]*:\K[0-9]+' $HOME/${NODE_HOME}/config/config.toml)
-LADDR_PORT=$(grep -oP 'laddr = "tcp://[^:]*:\K[0-9]+' $HOME/${NODE_HOME}/config/config.toml)
-PPROF_LADDR_PORT=$(grep -oP 'pprof_laddr = "localhost:\K[0-9]+' $HOME/${NODE_HOME}/config/config.toml)
-P2P_LADDR_PORT=$(grep -oP 'laddr = "tcp://[^:]*:\K[0-9]+' $HOME/${NODE_HOME}/config/config.toml)
-EXTERNAL_ADDRESS_PORT=$(grep -oP 'external_address = ".*:\K[0-9]+' $HOME/${NODE_HOME}/config/config.toml)
-PROMETHEUS_LISTEN_ADDR=$(grep -oP 'prometheus_listen_addr = ":\K[0-9]+' $HOME/${NODE_HOME}/config/config.toml)
-API_ADDRESS=$(grep -oP 'address = "tcp://[^:]*:\K[0-9]+' $HOME/${NODE_HOME}/config/app.toml)
-GRPC_ADDRESS=$(grep -oP 'address = "[^:]*:\K[0-9]+' $HOME/${NODE_HOME}/config/app.toml)
-GRPC_WEB_ADDRESS=$(grep -oP 'address = "[^:]*:\K[0-9]+' $HOME/${NODE_HOME}/config/app.toml)
-JSON_RPC_ADDRESS=$(grep -oP 'address = "[^:]*:\K[0-9]+' $HOME/${NODE_HOME}/config/app.toml)
-WS_ADDRESS=$(grep -oP 'ws-address = "[^:]*:\K[0-9]+' $HOME/${NODE_HOME}/config/app.toml)
-
-echo -e "Proxy App Port: $PROXY_APP_PORT\nLaddr Port: $LADDR_PORT\nPprof Laddr Port: $PPROF_LADDR_PORT\nP2P Laddr Port: $P2P_LADDR_PORT\nExternal Address Port: $EXTERNAL_ADDRESS_PORT\nPrometheus Listen Addr: $PROMETHEUS_LISTEN_ADDR\nAPI Address: $API_ADDRESS\nGRPC Address: $GRPC_ADDRESS\nGRPC-Web Address: $GRPC_WEB_ADDRESS\nJSON-RPC Address: $JSON_RPC_ADDRESS\nWS Address: $WS_ADDRESS"
