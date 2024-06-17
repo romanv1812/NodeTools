@@ -4,9 +4,6 @@ EXTERNAL_IP=$(wget -qO- eth0.me)
 NODE_NUMBER=$1
 NODE_HOME=$2
 
-echo "NODE_NUMBER: $NODE_NUMBER"
-echo "NODE_HOME: $NODE_HOME"
-
 sed -i.bak \
     -e "s/\(proxy_app = \"tcp:\/\/\)\([^:]*\):\([0-9]*\).*/\1\2:$((NODE_NUMBER + 266))58\"/" \
     -e "s/\(laddr = \"tcp:\/\/\)\([^:]*\):\([0-9]*\).*/\1\2:$((NODE_NUMBER + 266))57\"/" \
